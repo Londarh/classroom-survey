@@ -1,0 +1,3 @@
+# Single-page app fallback for Cloudflare Pages: any path that is not a real
+# file serves index.html, so refreshing on /login (or any route) works.
+/*    /index.html   200

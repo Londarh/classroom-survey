@@ -8,17 +8,17 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 1 — Project Setup
 
-- [ ] Create a new React + TypeScript project with Vite.
-- [ ] Add Tailwind CSS.
-- [ ] Add React Router.
-- [ ] Add Supabase JavaScript client.
-- [ ] Add Recharts.
-- [ ] Add QR code generation package.
-- [ ] Create the initial project folder structure.
-- [ ] Add `.env.example` with Supabase environment variable names.
-- [ ] Configure ESLint and formatting.
-- [ ] Create a basic home page.
-- [ ] Verify the project builds successfully.
+- [x] Create a new React + TypeScript project with Vite.
+- [x] Add Tailwind CSS.
+- [x] Add React Router.
+- [x] Add Supabase JavaScript client.
+- [x] Add Recharts.
+- [x] Add QR code generation package.
+- [x] Create the initial project folder structure.
+- [x] Add `.env.example` with Supabase environment variable names.
+- [x] Configure ESLint and formatting.
+- [x] Create a basic home page.
+- [x] Verify the project builds successfully.
 
 ---
 
