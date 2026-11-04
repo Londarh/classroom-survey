@@ -315,7 +315,11 @@ DUPLICATE_RESPONSE
 INVALID_QUESTION
 INVALID_CHOICE
 MISSING_REQUIRED_ANSWER
+INVALID_TOKEN
+INVALID_PAYLOAD
 ```
+
+Errors are raised as exceptions whose message is the code, so the frontend reads `error.message`. Instructor functions use additional codes; see `supabase/README.md`.
 
 The frontend should map database errors to friendly user messages.
 

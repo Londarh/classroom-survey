@@ -25,17 +25,18 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 # Phase 2 — Supabase Project and Database
 
 - [ ] Create a Supabase project.
-- [ ] Write the schema, RLS policies, and RPCs as SQL files in `supabase/`.
-- [ ] Create the `surveys` table.
-- [ ] Create the `questions` table.
-- [ ] Create the `choices` table.
-- [ ] Create the `responses` table.
-- [ ] Create the `answers` table.
-- [ ] Add foreign-key constraints.
-- [ ] Add database indexes.
-- [ ] Add timestamps.
-- [ ] Add survey-status validation.
-- [ ] Create Row Level Security policies.
+- [ ] Run `supabase/001_schema.sql`, `002_rls.sql`, and `003_functions.sql` in the SQL editor, in order.
+- [x] Write the schema, RLS policies, and RPCs as SQL files in `supabase/`.
+- [x] Create the `surveys` table.
+- [x] Create the `questions` table.
+- [x] Create the `choices` table.
+- [x] Create the `responses` table.
+- [x] Create the `answers` table.
+- [x] Add foreign-key constraints.
+- [x] Add database indexes.
+- [x] Add timestamps.
+- [x] Add survey-status validation.
+- [x] Create Row Level Security policies.
 - [ ] Verify students cannot read survey results.
 - [ ] Verify anonymous students can read active surveys.
 - [ ] Verify anonymous students can submit responses.
@@ -52,6 +53,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [ ] Create a protected-route component.
 - [ ] Redirect unauthenticated users to login.
 - [ ] Show the logged-in instructor in the dashboard.
+- [ ] Create the instructor account and disable public signups and anonymous sign-ins in Supabase Auth.
 - [ ] Create an instructor demo login for grading (shared through HuskyCT, not committed to the repository).
 
 ---
@@ -98,9 +100,9 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 # Phase 6 — Survey Activation
 
 - [ ] Add activation logic.
-- [ ] Ensure at most one survey is Active.
-- [ ] Automatically close the previously active survey.
-- [ ] Generate a public survey slug or identifier.
+- [x] Ensure at most one survey is Active.
+- [x] Automatically close the previously active survey.
+- [x] Generate a public survey slug or identifier.
 - [ ] Generate the public survey URL.
 - [ ] Generate a QR code from the public URL.
 - [ ] Create a Present Survey page.
@@ -135,7 +137,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [ ] Save the token with each response.
 - [ ] Prevent the same token from submitting twice to the same survey.
 - [ ] Show a friendly message if a duplicate submission is attempted.
-- [ ] Add a database uniqueness constraint if appropriate.
+- [x] Add a database uniqueness constraint if appropriate.
 
 ---
 
