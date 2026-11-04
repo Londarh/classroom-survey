@@ -24,8 +24,8 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 2 — Supabase Project and Database
 
-- [ ] Create a Supabase project.
-- [ ] Run `supabase/001_schema.sql`, `002_rls.sql`, and `003_functions.sql` in the SQL editor, in order.
+- [x] Create a Supabase project.
+- [x] Run `supabase/001_schema.sql`, `002_rls.sql`, and `003_functions.sql` in the SQL editor, in order.
 - [x] Write the schema, RLS policies, and RPCs as SQL files in `supabase/`.
 - [x] Create the `surveys` table.
 - [x] Create the `questions` table.
@@ -53,7 +53,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Create a protected-route component.
 - [x] Redirect unauthenticated users to login.
 - [x] Show the logged-in instructor in the dashboard.
-- [ ] Create the instructor account and disable public signups and anonymous sign-ins in Supabase Auth.
+- [x] Create the instructor account and disable public signups and anonymous sign-ins in Supabase Auth.
 - [ ] Create an instructor demo login for grading (shared through HuskyCT, not committed to the repository).
 
 ---
@@ -65,7 +65,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Display survey title, status, and creation date.
 - [x] Add status badges for Draft, Active, Closed, and Archived.
 - [x] Add a New Survey button.
-- [ ] Add Edit action.
+- [x] Add Edit action.
 - [ ] Add Duplicate action.
 - [ ] Add Delete action.
 - [ ] Add Archive action.
@@ -79,21 +79,21 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 5 — Survey Editor
 
-- [ ] Create a survey editor page.
-- [ ] Add survey title field.
-- [ ] Add optional description field.
-- [ ] Add questions dynamically.
-- [ ] Support Multiple Choice questions.
-- [ ] Support True / False questions.
-- [ ] Add answer choices dynamically.
-- [ ] Reorder questions.
-- [ ] Reorder choices.
-- [ ] Delete questions.
-- [ ] Delete choices.
-- [ ] Validate required fields.
-- [ ] Save a survey as Draft.
-- [ ] Load an existing survey for editing.
-- [ ] Prevent editing an active survey unless it is first closed.
+- [x] Create a survey editor page.
+- [x] Add survey title field.
+- [x] Add optional description field.
+- [x] Add questions dynamically.
+- [x] Support Multiple Choice questions.
+- [x] Support True / False questions.
+- [x] Add answer choices dynamically.
+- [x] Reorder questions.
+- [x] Reorder choices.
+- [x] Delete questions.
+- [x] Delete choices.
+- [x] Validate required fields.
+- [x] Save a survey as Draft.
+- [x] Load an existing survey for editing.
+- [x] Prevent editing a survey that is not a draft (only drafts can be edited; see DECISIONS.md #2).
 
 ---
 

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import StatusBadge from '../components/StatusBadge.tsx'
 import { SURVEY_STATUSES, listSurveys } from '../lib/surveys.ts'
 import type { SurveyStatus, SurveySummary } from '../lib/surveys.ts'
+import { fieldClass, primaryButton, secondaryButton } from '../lib/styles.ts'
 import { useAuth } from '../lib/useAuth.ts'
 
 const STATUS_LABELS: Record<SurveyStatus, string> = {
@@ -19,13 +20,6 @@ function formatDate(iso: string): string {
     year: 'numeric',
   })
 }
-
-const primaryButton =
-  'inline-flex min-h-11 items-center rounded-lg bg-slate-900 px-5 py-2 font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900'
-const secondaryButton =
-  'inline-flex min-h-11 items-center rounded-lg border border-slate-400 bg-white px-5 py-2 font-medium text-slate-900 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-60'
-const fieldClass =
-  'mt-1 block w-full min-h-11 rounded-lg border border-slate-400 bg-white px-3 py-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900'
 
 export default function Dashboard() {
   const { session, signOut } = useAuth()
@@ -198,6 +192,16 @@ export default function Dashboard() {
                 <p className="mt-1 text-sm text-slate-600">
                   Created: {formatDate(survey.created_at)}
                 </p>
+                {survey.status === 'draft' && (
+                  <div className="mt-3">
+                    <Link
+                      to={`/surveys/${survey.id}/edit`}
+                      className={secondaryButton}
+                    >
+                      Edit
+                    </Link>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

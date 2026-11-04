@@ -5,8 +5,8 @@ import { isSupabaseConfigured } from './lib/supabase.ts'
 import Dashboard from './pages/Dashboard.tsx'
 import Landing from './pages/Landing.tsx'
 import Login from './pages/Login.tsx'
-import NewSurvey from './pages/NewSurvey.tsx'
 import NotFound from './pages/NotFound.tsx'
+import SurveyEditor from './pages/SurveyEditor.tsx'
 
 export default function App() {
   if (!isSupabaseConfigured) return <ConfigMissing />
@@ -19,7 +19,8 @@ export default function App() {
       {/* Instructor-only pages: visitors who are not logged in go to /login. */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/surveys/new" element={<NewSurvey />} />
+        <Route path="/surveys/new" element={<SurveyEditor />} />
+        <Route path="/surveys/:id/edit" element={<SurveyEditor />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
