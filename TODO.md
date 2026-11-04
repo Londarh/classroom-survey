@@ -46,13 +46,13 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 3 — Instructor Authentication
 
-- [ ] Create the instructor login page.
-- [ ] Connect login to Supabase Auth.
-- [ ] Add logout.
-- [ ] Create an authentication context/provider.
-- [ ] Create a protected-route component.
-- [ ] Redirect unauthenticated users to login.
-- [ ] Show the logged-in instructor in the dashboard.
+- [x] Create the instructor login page.
+- [x] Connect login to Supabase Auth.
+- [x] Add logout.
+- [x] Create an authentication context/provider.
+- [x] Create a protected-route component.
+- [x] Redirect unauthenticated users to login.
+- [x] Show the logged-in instructor in the dashboard.
 - [ ] Create the instructor account and disable public signups and anonymous sign-ins in Supabase Auth.
 - [ ] Create an instructor demo login for grading (shared through HuskyCT, not committed to the repository).
 
@@ -60,11 +60,11 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 4 — Instructor Dashboard
 
-- [ ] Create the dashboard layout.
-- [ ] Load surveys from Supabase.
-- [ ] Display survey title, status, and creation date.
-- [ ] Add status badges for Draft, Active, Closed, and Archived.
-- [ ] Add a New Survey button.
+- [x] Create the dashboard layout.
+- [x] Load surveys from Supabase.
+- [x] Display survey title, status, and creation date.
+- [x] Add status badges for Draft, Active, Closed, and Archived.
+- [x] Add a New Survey button.
 - [ ] Add Edit action.
 - [ ] Add Duplicate action.
 - [ ] Add Delete action.
@@ -72,8 +72,8 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [ ] Add View Results action.
 - [ ] Add Activate action.
 - [ ] Add Close action.
-- [ ] Add search by survey title.
-- [ ] Add filtering by status.
+- [x] Add search by survey title.
+- [x] Add filtering by status.
 
 ---
 

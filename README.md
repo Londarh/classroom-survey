@@ -24,7 +24,9 @@ The app is then available at http://localhost:5173.
 
 ### Environment variables
 
-Copy `.env.example` to `.env` and fill in your Supabase project values. The `.env` file is git-ignored; never commit it. Supabase is not used yet, so the app runs without it for now.
+Copy `.env.example` to `.env` and fill in your Supabase project values (Project Settings > API: the project URL and the public `anon` key). The `.env` file is git-ignored; never commit it. Without these values the app shows a "Setup needed" page.
+
+The database must be set up first: see [supabase/README.md](supabase/README.md) for the SQL files and for creating the instructor account you log in with.
 
 ### Other scripts
 
