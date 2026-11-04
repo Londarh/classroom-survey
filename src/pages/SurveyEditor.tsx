@@ -3,7 +3,8 @@ import type { ReactNode } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import QuestionCard from '../components/QuestionCard.tsx'
 import {
-  SaveSurveyError,
+  SurveyActionError,
+  activateSurvey,
   getSurveyForEdit,
   saveDraftSurvey,
 } from '../lib/surveys.ts'
@@ -83,7 +84,14 @@ function SurveyEditorForm({ id }: { id: string | undefined }) {
   )
   // Validation messages appear only after the first attempt to save.
   const [attempted, setAttempted] = useState(false)
-  const [formError, setFormError] = useState<string | null>(null)
+  // After a new survey was saved but could not be activated, the error
+  // arrives here with the redirect to its edit page.
+  const [formError, setFormError] = useState<string | null>(
+    (location.state as { activateError?: string } | null)?.activateError ??
+      null,
+  )
+  // True while "Activate" (save, then activate) is the running action.
+  const [activating, setActivating] = useState(false)
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
   const [confirmDeleteKey, setConfirmDeleteKey] = useState<string | null>(null)
 
@@ -138,20 +146,50 @@ function SurveyEditorForm({ id }: { id: string | undefined }) {
 
   const validation = useMemo(() => validateDraft(draft), [draft])
 
-  async function handleSave() {
+  function errorMessage(error: unknown, fallback: string): string {
+    return error instanceof SurveyActionError ? error.message : fallback
+  }
+
+  // Save Draft saves. Activate saves first, then activates and opens the
+  // present page. Both validate the same way before anything is sent.
+  async function submit(activate: boolean) {
     if (saving) return
     setAttempted(true)
     setFormError(null)
     setServerErrors({})
 
     if (validation.hasErrors) {
-      setFormError('Fix the problems marked below, then save again.')
+      setFormError('Fix the problems marked below, then try again.')
+      return
+    }
+    if (activate && draft.questions.length === 0) {
+      setFormError('Add at least one question before activating.')
       return
     }
 
+    setActivating(activate)
     setSaveState('saving')
+
+    let savedId: string
     try {
-      const savedId = await saveDraftSurvey(isNew ? null : id, draft)
+      savedId = await saveDraftSurvey(isNew ? null : id, draft)
+    } catch (error) {
+      setSaveState('idle')
+      setActivating(false)
+      const message = errorMessage(
+        error,
+        "We couldn't save the survey. Check your connection and try again.",
+      )
+      const questionKey =
+        error instanceof SurveyActionError && error.questionNumber
+          ? draft.questions[error.questionNumber - 1]?.key
+          : undefined
+      if (questionKey) setServerErrors({ [questionKey]: message })
+      else setFormError(message)
+      return
+    }
+
+    if (!activate) {
       if (isNew) {
         // Continue on the edit page of the survey that was just created.
         navigate(`/surveys/${savedId}/edit`, {
@@ -161,18 +199,29 @@ function SurveyEditorForm({ id }: { id: string | undefined }) {
       } else {
         setSaveState('saved')
       }
+      return
+    }
+
+    try {
+      await activateSurvey(savedId)
+      navigate(`/surveys/${savedId}/present`)
     } catch (error) {
-      setSaveState('idle')
-      const message =
-        error instanceof SaveSurveyError
-          ? error.message
-          : "We couldn't save the survey. Check your connection and try again."
-      const questionKey =
-        error instanceof SaveSurveyError && error.questionNumber
-          ? draft.questions[error.questionNumber - 1]?.key
-          : undefined
-      if (questionKey) setServerErrors({ [questionKey]: message })
-      else setFormError(message)
+      const message = errorMessage(
+        error,
+        "We couldn't activate the survey. Check your connection and try again.",
+      )
+      if (isNew) {
+        // The draft was saved, so carry on from its edit page and show why
+        // activation did not happen.
+        navigate(`/surveys/${savedId}/edit`, {
+          replace: true,
+          state: { saved: true, activateError: message },
+        })
+      } else {
+        setActivating(false)
+        setSaveState('saved')
+        setFormError(message)
+      }
     }
   }
 
@@ -362,11 +411,19 @@ function SurveyEditorForm({ id }: { id: string | undefined }) {
           <div className="flex flex-wrap items-center gap-4">
             <button
               type="button"
-              onClick={handleSave}
+              onClick={() => submit(false)}
               disabled={saving}
               className={primaryButton}
             >
-              {saving ? 'Saving...' : 'Save Draft'}
+              {saving && !activating ? 'Saving...' : 'Save Draft'}
+            </button>
+            <button
+              type="button"
+              onClick={() => submit(true)}
+              disabled={saving}
+              className={secondaryButton}
+            >
+              {saving && activating ? 'Activating...' : 'Activate'}
             </button>
             <span role="status" className="text-slate-700">
               {saveState === 'saved' ? 'Saved' : ''}

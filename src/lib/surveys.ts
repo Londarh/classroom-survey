@@ -70,43 +70,58 @@ export async function getSurveyForEdit(
   }
 }
 
-/** A failed save, with a message that is safe to show to the instructor. */
-export class SaveSurveyError extends Error {
+/** A failed action, with a message that is safe to show to the instructor. */
+export class SurveyActionError extends Error {
   /** 1-based number of the question the problem is about, when known. */
   questionNumber?: number
 
   constructor(message: string, questionNumber?: number) {
     super(message)
-    this.name = 'SaveSurveyError'
+    this.name = 'SurveyActionError'
     this.questionNumber = questionNumber
   }
 }
 
 /**
- * Turns an error from save_draft_survey into plain language. The function
- * raises codes as the error message; VALIDATION_ERROR also has a readable
- * "details" text such as "Question 2 needs between 2 and 20 choices."
+ * Turns an error from one of the database functions into plain language. The
+ * functions raise a code (such as SURVEY_INCOMPLETE) as the error message, and
+ * many also include a readable "details" sentence, for example
+ * "Every question needs at least two choices." which we show as it is.
  */
-function toSaveError(error: { message: string; details?: string | null }) {
+function toActionError(
+  error: { message: string; details?: string | null },
+  fallback: string,
+): SurveyActionError {
+  const detail = error.details?.trim()
   switch (error.message) {
     case 'VALIDATION_ERROR': {
-      const detail =
-        error.details?.trim() || 'Some of the survey details are not valid.'
-      const match = /question (\d+)/i.exec(detail)
-      return new SaveSurveyError(detail, match ? Number(match[1]) : undefined)
+      const text = detail || 'Some of the survey details are not valid.'
+      const match = /question (\d+)/i.exec(text)
+      return new SurveyActionError(text, match ? Number(match[1]) : undefined)
     }
     case 'SURVEY_NOT_EDITABLE':
-      return new SaveSurveyError('Only drafts can be edited.')
+      return new SurveyActionError('Only drafts can be edited.')
     case 'SURVEY_NOT_FOUND':
-      return new SaveSurveyError('This survey no longer exists.')
+      return new SurveyActionError('This survey no longer exists.')
     case 'NOT_AUTHORIZED':
-      return new SaveSurveyError(
-        'Your login has expired. Please log in again, then save.',
+      return new SurveyActionError(
+        'Your login has expired. Please log in again, then try again.',
+      )
+    case 'SURVEY_INCOMPLETE':
+      return new SurveyActionError(
+        detail ||
+          'The survey is not complete: it needs a question, and every question needs at least two choices.',
+      )
+    case 'INVALID_STATUS_TRANSITION':
+      return new SurveyActionError(
+        detail || 'The survey is not in a state that allows that.',
+      )
+    case 'ACTIVATION_CONFLICT':
+      return new SurveyActionError(
+        detail || 'Another survey was activated at the same time. Try again.',
       )
     default:
-      return new SaveSurveyError(
-        "We couldn't save the survey. Check your connection and try again.",
-      )
+      return new SurveyActionError(fallback)
   }
 }
 
@@ -128,7 +143,106 @@ export async function saveDraftSurvey(
 
   if (error) {
     console.error('save_draft_survey failed', error)
-    throw toSaveError(error)
+    throw toActionError(
+      error,
+      "We couldn't save the survey. Check your connection and try again.",
+    )
   }
   return (data as { id: string }).id
+}
+
+// ---------------------------------------------------------------------------
+// Status changes. These go through the database functions (never a plain
+// update of the surveys table) so the one-active-survey rule, the slug and the
+// allowed transitions are enforced in one place.
+// ---------------------------------------------------------------------------
+
+async function callStatusFunction(
+  name: 'activate_survey' | 'close_survey' | 'archive_survey',
+  id: string,
+  fallback: string,
+): Promise<void> {
+  const { error } = await supabase.rpc(name, { p_survey_id: id })
+  if (error) {
+    console.error(`${name} failed`, error)
+    throw toActionError(error, fallback)
+  }
+}
+
+/** draft -> active. Closes any other active survey and creates the slug. */
+export function activateSurvey(id: string): Promise<void> {
+  return callStatusFunction(
+    'activate_survey',
+    id,
+    "We couldn't activate the survey. Check your connection and try again.",
+  )
+}
+
+/** active -> closed. Students can no longer submit. */
+export function closeSurvey(id: string): Promise<void> {
+  return callStatusFunction(
+    'close_survey',
+    id,
+    "We couldn't close the survey. Check your connection and try again.",
+  )
+}
+
+/** draft or closed -> archived. Responses are kept. */
+export function archiveSurvey(id: string): Promise<void> {
+  return callStatusFunction(
+    'archive_survey',
+    id,
+    "We couldn't archive the survey. Check your connection and try again.",
+  )
+}
+
+/** Permanently deletes a survey with its questions, choices and responses. */
+export async function deleteSurvey(id: string): Promise<void> {
+  const { error } = await supabase.from('surveys').delete().eq('id', id)
+  if (error) {
+    console.error('Delete failed', error)
+    throw new SurveyActionError(
+      "We couldn't delete the survey. Check your connection and try again.",
+    )
+  }
+}
+
+/** How many responses a survey has received (instructor only, via RLS). */
+export async function getResponseCount(id: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('responses')
+    .select('id', { count: 'exact', head: true })
+    .eq('survey_id', id)
+  if (error) throw error
+  return count ?? 0
+}
+
+/** What the present page needs about a survey. */
+export interface PresentSurvey {
+  id: string
+  title: string
+  status: SurveyStatus
+  public_slug: string | null
+}
+
+export interface PresentSnapshot {
+  survey: PresentSurvey | null
+  responseCount: number
+}
+
+/** The survey (or null if it does not exist) and its current response count. */
+export async function getPresentSnapshot(id: string): Promise<PresentSnapshot> {
+  const [surveyResult, responseCount] = await Promise.all([
+    supabase
+      .from('surveys')
+      .select('id, title, status, public_slug')
+      .eq('id', id)
+      .maybeSingle(),
+    getResponseCount(id),
+  ])
+  if (surveyResult.error) throw surveyResult.error
+  return {
+    survey: (surveyResult.data as PresentSurvey | null) ?? null,
+    responseCount,
+  }
 }

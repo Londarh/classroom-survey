@@ -67,11 +67,11 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Add a New Survey button.
 - [x] Add Edit action.
 - [ ] Add Duplicate action.
-- [ ] Add Delete action.
-- [ ] Add Archive action.
+- [x] Add Delete action.
+- [x] Add Archive action.
 - [ ] Add View Results action.
-- [ ] Add Activate action.
-- [ ] Add Close action.
+- [x] Add Activate action.
+- [x] Add Close action.
 - [x] Add search by survey title.
 - [x] Add filtering by status.
 
@@ -99,17 +99,17 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 6 — Survey Activation
 
-- [ ] Add activation logic.
+- [x] Add activation logic.
 - [x] Ensure at most one survey is Active.
 - [x] Automatically close the previously active survey.
 - [x] Generate a public survey slug or identifier.
-- [ ] Generate the public survey URL.
-- [ ] Generate a QR code from the public URL.
-- [ ] Create a Present Survey page.
-- [ ] Display survey title and QR code.
-- [ ] Display a readable fallback URL.
-- [ ] Add a Close Survey button.
-- [ ] Add a Download QR Code button.
+- [x] Generate the public survey URL.
+- [x] Generate a QR code from the public URL.
+- [x] Create a Present Survey page.
+- [x] Display survey title and QR code.
+- [x] Display a readable fallback URL.
+- [x] Add a Close Survey button.
+- [x] Add a Download QR Code button.
 
 ---
 

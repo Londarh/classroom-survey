@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import StatusBadge from '../components/StatusBadge.tsx'
+import SurveyCard from '../components/SurveyCard.tsx'
 import { SURVEY_STATUSES, listSurveys } from '../lib/surveys.ts'
 import type { SurveyStatus, SurveySummary } from '../lib/surveys.ts'
 import { fieldClass, primaryButton, secondaryButton } from '../lib/styles.ts'
@@ -11,14 +11,6 @@ const STATUS_LABELS: Record<SurveyStatus, string> = {
   active: 'Active',
   closed: 'Closed',
   archived: 'Archived',
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }
 
 export default function Dashboard() {
@@ -33,6 +25,8 @@ export default function Dashboard() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<SurveyStatus | 'all'>('all')
   const [loggingOut, setLoggingOut] = useState(false)
+  // True while any card is running an action; every button is then disabled.
+  const [busy, setBusy] = useState(false)
 
   // Load the surveys on first show, and again whenever Try again is pressed.
   useEffect(() => {
@@ -58,6 +52,12 @@ export default function Dashboard() {
   function retry() {
     setLoading(true)
     setFailed(false)
+    setReloadKey((key) => key + 1)
+  }
+
+  // Reload the list after a survey was closed, archived or deleted. The current
+  // list stays on screen while it reloads.
+  function refresh() {
     setReloadKey((key) => key + 1)
   }
 
@@ -181,28 +181,13 @@ export default function Dashboard() {
         ) : (
           <ul className="space-y-3">
             {visibleSurveys.map((survey) => (
-              <li
+              <SurveyCard
                 key={survey.id}
-                className="rounded-lg border border-slate-300 bg-white p-4"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <h2 className="text-lg font-semibold">{survey.title}</h2>
-                  <StatusBadge status={survey.status} />
-                </div>
-                <p className="mt-1 text-sm text-slate-600">
-                  Created: {formatDate(survey.created_at)}
-                </p>
-                {survey.status === 'draft' && (
-                  <div className="mt-3">
-                    <Link
-                      to={`/surveys/${survey.id}/edit`}
-                      className={secondaryButton}
-                    >
-                      Edit
-                    </Link>
-                  </div>
-                )}
-              </li>
+                survey={survey}
+                disabled={busy}
+                onBusyChange={setBusy}
+                onChanged={refresh}
+              />
             ))}
           </ul>
         )}

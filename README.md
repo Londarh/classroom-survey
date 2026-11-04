@@ -26,6 +26,8 @@ The app is then available at http://localhost:5173.
 
 Copy `.env.example` to `.env` and fill in your Supabase project values (Project Settings > API: the project URL and the public `anon` key). The `.env` file is git-ignored; never commit it. Without these values the app shows a "Setup needed" page.
 
+Optional: `VITE_PUBLIC_BASE_URL` sets the address used in student links and QR codes (default: the address the site is served from). To test with a phone during development, set it to your computer's network address, for example `http://192.168.1.20:5173`, and restart the dev server.
+
 The database must be set up first: see [supabase/README.md](supabase/README.md) for the SQL files and for creating the instructor account you log in with.
 
 ### Other scripts

@@ -7,6 +7,8 @@ import Landing from './pages/Landing.tsx'
 import Login from './pages/Login.tsx'
 import NotFound from './pages/NotFound.tsx'
 import SurveyEditor from './pages/SurveyEditor.tsx'
+import SurveyPresent from './pages/SurveyPresent.tsx'
+import SurveyResults from './pages/SurveyResults.tsx'
 
 export default function App() {
   if (!isSupabaseConfigured) return <ConfigMissing />
@@ -21,6 +23,8 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/surveys/new" element={<SurveyEditor />} />
         <Route path="/surveys/:id/edit" element={<SurveyEditor />} />
+        <Route path="/surveys/:id/present" element={<SurveyPresent />} />
+        <Route path="/surveys/:id/results" element={<SurveyResults />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
