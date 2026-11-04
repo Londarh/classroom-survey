@@ -54,8 +54,18 @@ function PageMessage({
   )
 }
 
+/**
+ * /surveys/new and /surveys/:id/edit both render this page. React would reuse
+ * one component instance across them (keeping stale state, such as a "Saving..."
+ * button that never resets), so the form is keyed by the survey id: a new id,
+ * or going from "new" to a saved survey, always starts a fresh form.
+ */
 export default function SurveyEditor() {
   const { id } = useParams()
+  return <SurveyEditorForm key={id ?? 'new'} id={id} />
+}
+
+function SurveyEditorForm({ id }: { id: string | undefined }) {
   const isNew = id === undefined
   const navigate = useNavigate()
   const location = useLocation()
