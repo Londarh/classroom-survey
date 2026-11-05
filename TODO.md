@@ -190,13 +190,13 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 13 — UI Polish
 
-- [ ] Add consistent page layouts.
-- [ ] Improve mobile responsiveness.
+- [x] Add consistent page layouts.
+- [x] Improve mobile responsiveness.
 - [x] Add loading states.
 - [x] Add empty states.
 - [x] Add error messages.
 - [x] Add confirmation dialogs for destructive actions.
-- [ ] Improve QR-code presentation for classroom projection.
+- [x] Improve QR-code presentation for classroom projection.
 - [x] Test accessibility and keyboard navigation.
 - [x] Improve color contrast.
 
@@ -206,14 +206,14 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 - [x] Test instructor login.
 - [x] Test survey creation.
-- [ ] Test survey editing.
-- [ ] Test activation.
-- [ ] Test closing surveys.
+- [x] Test survey editing.
+- [x] Test activation.
+- [x] Test closing surveys.
 - [x] Test QR-code links.
 - [x] Test student submissions.
-- [ ] Test duplicate-submission prevention.
-- [ ] Test results calculations.
-- [ ] Test CSV export.
+- [x] Test duplicate-submission prevention.
+- [x] Test results calculations.
+- [x] Test CSV export.
 - [x] Test mobile layout.
 - [x] Test with at least two browsers.
 - [x] Test unauthorized access attempts.
@@ -232,7 +232,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Verify production login.
 - [x] Verify QR codes point to the production URL.
 - [x] Test student submissions in production.
-- [ ] Test instructor results in production.
+- [x] Test instructor results in production.
 
 ---
 
