@@ -107,6 +107,16 @@ Decisions made while reviewing the specification files in `docs/`. Where the doc
 
 ---
 
+## Deployment decisions
+
+30. **Hosted as a Cloudflare Worker with static assets; page routing is set in `wrangler.jsonc`, not `_redirects`.**
+    The usual single-page-app rule (`/* /index.html 200` in `public/_redirects`) made Cloudflare's deploy fail with "Invalid _redirects configuration: Infinite loop detected in this rule", because this project deploys as a Worker with static assets rather than as a Pages site. So `public/_redirects` was deleted, and `wrangler.jsonc` (project name `classroom-survey`) serves the `dist` folder with `"not_found_handling": "single-page-application"`. A request that matches a built file is served as that file; anything else gets `index.html`, and React Router shows the page. Refreshing on `/login`, `/dashboard` or a student link `/s/<slug>` therefore works. There is no Worker script.
+
+31. **Consequences of that routing.**
+    Unknown addresses are answered with `index.html` and a normal 200 status, and the app's own "Page not found" screen explains it, so the server never sends a real HTTP 404 for a page. The `compatibility_date` in `wrangler.jsonc` is pinned (2026-11-04); for a site that is only static files it does not change behaviour and rarely needs updating. The `VITE_` settings are compiled into the site, so they must be set as Cloudflare **build** variables, and changing one needs a new build.
+
+---
+
 ## Still open (to decide when we reach them)
 
 - **QR code origin:** generate it from `window.location.origin`, with an optional environment-variable override for testing on a phone.

@@ -6,7 +6,7 @@ A web app for quick in-class surveys. Instructors create surveys and show a QR c
 
 ## Tech stack
 
-React, TypeScript, Vite, Tailwind CSS, React Router, Supabase (Postgres + Auth), Recharts, `qrcode`. Hosted on Cloudflare Pages.
+React, TypeScript, Vite, Tailwind CSS, React Router, Supabase (Postgres + Auth), Recharts, `qrcode`. Hosted on Cloudflare (a Worker that serves the built files as static assets).
 
 ## Running locally
 
@@ -46,10 +46,34 @@ The database must be set up first: see [supabase/README.md](supabase/README.md) 
 ```text
 docs/        Specification, database, API, UI, and assignment documents
 src/         Application code (components/, pages/, lib/)
-public/      Static files, including _redirects for single-page-app routing
-supabase/    Database SQL (schema, policies, functions) - added later
+public/      Static files copied into the build as they are (the favicon)
+scripts/     check-security.mjs: tries forbidden actions as a student (see docs/TESTING.md)
+supabase/    Database SQL: schema, policies and functions (see supabase/README.md)
+wrangler.jsonc  Cloudflare deployment settings (static assets, single-page-app routing)
 ```
 
 ## Deployment
 
-Planned: Cloudflare Pages connected to the GitHub repository (build command `npm run build`, output directory `dist`). `public/_redirects` makes routes such as `/login` work on page refresh. Full setup and deployment instructions will be added here.
+The site is deployed on Cloudflare as a **Worker with static assets**: there is no server code, Cloudflare just serves the files that `npm run build` puts in `dist/`. The database stays on Supabase.
+
+### Cloudflare settings
+
+Create the project from the GitHub repository (Workers & Pages), then set:
+
+| Setting        | Value                                                          |
+| -------------- | -------------------------------------------------------------- |
+| Build command  | `npm run build`                                                |
+| Deploy command | `npx wrangler deploy` (reads [wrangler.jsonc](wrangler.jsonc)) |
+
+Add these as **build** variables (not only runtime ones), because Vite compiles `VITE_` values into the site while it builds, so changing one needs a new build:
+
+- `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`: the same values as in your local `.env`. Only the public anon key belongs here; never the service-role key.
+- `VITE_PUBLIC_BASE_URL` (optional): leave it unset in production, so student links and QR codes use the site's own address.
+
+### How routing works
+
+The app is a single-page app: pages such as `/login`, `/dashboard` and `/s/x7kf2q` are not files, React Router draws them in the browser. If someone refreshes on one of those addresses, the server must send them the app instead of a "not found" error.
+
+[wrangler.jsonc](wrangler.jsonc) does this with `"not_found_handling": "single-page-application"`: a request for a file that exists in `dist/` (the scripts, styles, favicon) is served as that file, and any other address is answered with `index.html`, after which React Router shows the right page. An address that matches no page shows the app's own "Page not found" screen. (The usual `public/_redirects` rule is not used: Cloudflare rejects it for this kind of deployment with "Infinite loop detected in this rule".)
+
+To check a deployment, open `/login` and refresh it, open `/s/anything` (it should say "Survey not found."), and log in with the instructor account.

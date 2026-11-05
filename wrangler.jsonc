@@ -1,0 +1,19 @@
+// Cloudflare deployment settings (Workers with static assets).
+//
+// The site is plain static files, so there is no Worker script: Cloudflare just
+// serves the built "dist" folder.
+//
+// Single-page-app routing: a React Router page such as /login or /s/x7kf2q is not
+// a real file in dist, so a refresh on it would normally be a 404. With
+// "not_found_handling": "single-page-application", any request that does not
+// match a file in dist is answered with index.html instead, and React Router then
+// shows the right page. (This replaces a public/_redirects rule, which Cloudflare
+// rejects here as an infinite loop.)
+{
+  "name": "classroom-survey",
+  "compatibility_date": "2026-11-04",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
