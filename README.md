@@ -2,6 +2,8 @@
 
 A web app for quick in-class surveys. Instructors create surveys and show a QR code in class; students scan it, answer on their phones without logging in, and the instructor sees the results.
 
+**Live site:** [https://classroom-survey.shval1128.workers.dev](https://classroom-survey.shval1128.workers.dev)
+
 > Work in progress for CSE 4095. See [TODO.md](TODO.md) for current status and [DECISIONS.md](DECISIONS.md) for design decisions.
 
 ## Tech stack

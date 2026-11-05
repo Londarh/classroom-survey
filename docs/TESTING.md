@@ -48,7 +48,7 @@ Written to the database by the script: nothing.
 - **Successful submissions, duplicate protection and result correctness.** These would need the script to write data, or to compare against it. Real submissions were tested by hand (section 2).
 - **Instructor writes through the table rules** (creating, editing and deleting directly). The script only reads as the instructor and calls the instructor functions with ids that do not exist. Creating, editing, duplicating and deleting from the app were used by you by hand.
 - **Load.** The specification asks for 200 simultaneous students; nothing here tests that.
-- **The deployed site.** The run was against the real database from a local computer.
+- **The deployed site.** The script runs from a local computer against the real database. The live site was checked by hand instead (section 5).
 - **A snapshot in time.** Run it again after any change to the SQL files, and before submitting.
 
 ---
@@ -62,15 +62,15 @@ Status key: **Tested** = really run. **Reported** = you told me it works while t
 | Instructor login                | Log in with the instructor account; log out; try a wrong password; open `/dashboard` while logged out                                        | **Tested / Reported.** Login and dashboard working (you reported). Wrong password shows "Incorrect email or password." and logged-out access to `/dashboard` redirects to `/login` (I checked both in the browser). |
 | Survey creation                 | Create a survey with both question types, save, reload, check rows in the Supabase Table Editor                                              | **Reported.** You created surveys; the stuck "Saving..." bug you found was fixed and re-confirmed.                                                                                                                  |
 | Survey editing                  | Open a draft, change text, add/remove/move questions and choices, save, reload                                                               | **Not tested** with real data (only with mocked responses during development).                                                                                                                                      |
-| Activation                      | Activate from the dashboard and from the editor; check the present page; activate a second survey and confirm the first closes              | **Not tested** separately. (The security run needed an active survey, so activation worked at least once.)                                                                                                          |
+| Activation                      | Activate from the dashboard and from the editor; check the present page; activate a second survey and confirm the first closes              | **Partly tested.** You activated a survey on the live site (the present page and QR code appeared). The editor's Activate button and "activating a second survey closes the first" were not tested. |
 | Closing surveys                 | Close from the present page and from the dashboard; the student link then says "no longer accepting responses"                              | **Not tested** separately. (The security run confirmed a closed survey's link shows students only `closed`.)                                                                                                        |
-| QR-code links                   | Scan the QR code on a phone (set `VITE_PUBLIC_BASE_URL` to the computer's network address while developing) and confirm it opens the survey | **Not tested.**                                                                                                                                                                                                     |
-| Student submissions             | Submit answers on the student page; check a `responses` row and its `answers` rows                                                           | **Reported.** You confirmed real submissions work.                                                                                                                                                                  |
+| QR-code links                   | Scan the QR code on a phone (set `VITE_PUBLIC_BASE_URL` to the computer's network address while developing) and confirm it opens the survey | **Reported (production).** You scanned the QR code on your phone, it opened the survey on the live site, and a submitted answer was recorded. |
+| Student submissions             | Submit answers on the student page; check a `responses` row and its `answers` rows                                                           | **Reported.** Real submissions work, including from a phone on the live site (section 5). |
 | Duplicate-submission prevention | Submit, reload (should say already submitted); clear site data and submit again (the server should refuse with the same message)             | **Not tested** with the real database. Verified in the browser only with mocked responses.                                                                                                                          |
 | Results calculations            | Compare the results page with a query on the Table Editor (see below)                                                                        | **Not tested** numerically; you reported the page works with real data.                                                                                                                                             |
 | CSV export                      | Export, open in Excel and Google Sheets; add a choice named `=1+1` and confirm it shows as text                                              | **Not tested** in a spreadsheet. Escaping and paging verified by unit checks and a mocked 2,300-response export.                                                                                                    |
-| Mobile layout                   | Student page, dashboard and editor on a real phone                                                                                           | **Not tested** on a real phone.                                                                                                                                                                                     |
-| Two browsers                    | Repeat the main flow in Chrome and another browser (Firefox or Edge)                                                                         | **Not tested.**                                                                                                                                                                                                     |
+| Mobile layout                   | Student page, dashboard and editor on a real phone                                                                                           | **Reported.** You used the student page on your phone on the live site. The dashboard and editor on a phone were not tested. |
+| Two browsers                    | Repeat the main flow in Chrome and another browser (Firefox or Edge)                                                                         | **Reported.** Brave on the computer and your phone's browser, through login, activation, scanning and submitting (section 5). |
 | Unauthorized access attempts    | Section 1 above                                                                                                                              | **Tested.** Security check run, 51 passed, 0 failed, 0 skipped.                                                                                                                                                     |
 | Database Row Level Security     | Section 1 above, with an active survey and instructor credentials                                                                            | **Tested.** Same run; see "What this proves" and "What it does not cover" above.                                                                                                                                    |
 
@@ -115,4 +115,23 @@ The keyboard walk-through you followed: Tab through the dashboard and open a del
 - **Browser checks against mocked database responses** (a fake local login and replaced network calls, so real data was never touched): the editor, activation, present page, student form and its messages, duplicate handling, results and chart layout, CSV export of 2,300 responses with the server limited to 1,000 and then 400 rows per request, and every dashboard state.
 - **Bugs found this way and fixed:** the editor staying on "Saving..." after a first save; stale data when moving between surveys' present and results pages; the editor error banner pointing the wrong way and not jumping to the problem.
 
-Not covered by any of the above: real submissions at class scale and the deployed site; both belong to the deployment phase.
+Not covered by any of the above: real submissions at class scale (the specification asks for 200 simultaneous students).
+
+---
+
+## 5. Production deployment (Cloudflare)
+
+Live address: https://classroom-survey.shval1128.workers.dev
+
+Deployed as a Cloudflare Worker with static assets (see [DECISIONS.md](../DECISIONS.md) #30). The first attempt failed on the `_redirects` file; the fix is `wrangler.jsonc`.
+
+| Check | Status |
+| --- | --- |
+| Build and deploy from the GitHub repository on Cloudflare, with the build variables set | **Reported.** Deployed and working. |
+| Single-page-app routing | **Reported (by use).** Scanning the QR code opens `/s/<slug>`, an address that is not a file, straight from a cold start, and the survey loaded. Refreshing on `/login` was not recorded separately. |
+| Instructor login on the live site | **Reported.** You logged in. |
+| Activate a survey on the live site | **Reported.** You activated one. |
+| QR code points to the live address | **Reported.** A phone scanned it and reached the survey, so it is not pointing at `localhost`. |
+| Student submission in production | **Reported.** You submitted an answer from your phone and it was recorded. |
+| Results page in production | **Not tested.** |
+| Security check against the production site | Not separate: the script talks to the same Supabase database the live site uses, and passed (section 1). |
