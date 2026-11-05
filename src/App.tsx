@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react'
 import { Route, Routes } from 'react-router'
 import ConfigMissing from './components/ConfigMissing.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
@@ -9,7 +10,10 @@ import NotFound from './pages/NotFound.tsx'
 import StudentSurvey from './pages/StudentSurvey.tsx'
 import SurveyEditor from './pages/SurveyEditor.tsx'
 import SurveyPresent from './pages/SurveyPresent.tsx'
-import SurveyResults from './pages/SurveyResults.tsx'
+
+// Loaded on demand: the results page brings in the charting library, which
+// students opening a survey on their phones should not have to download.
+const SurveyResults = lazy(() => import('./pages/SurveyResults.tsx'))
 
 export default function App() {
   if (!isSupabaseConfigured) return <ConfigMissing />
@@ -28,7 +32,20 @@ export default function App() {
         <Route path="/surveys/new" element={<SurveyEditor />} />
         <Route path="/surveys/:id/edit" element={<SurveyEditor />} />
         <Route path="/surveys/:id/present" element={<SurveyPresent />} />
-        <Route path="/surveys/:id/results" element={<SurveyResults />} />
+        <Route
+          path="/surveys/:id/results"
+          element={
+            <Suspense
+              fallback={
+                <main className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-600">
+                  <p role="status">Loading results...</p>
+                </main>
+              }
+            >
+              <SurveyResults />
+            </Suspense>
+          }
+        />
       </Route>
 
       <Route path="*" element={<NotFound />} />

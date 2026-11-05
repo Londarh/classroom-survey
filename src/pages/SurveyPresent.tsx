@@ -42,8 +42,17 @@ function PageMessage({
  * The page shown on the projector: the survey title, a big QR code, the link
  * written out, and how many students have answered.
  */
+/**
+ * Two different survey ids can reach this page without it being unmounted
+ * (browser back/forward, an edited URL), and React would keep the previous
+ * survey's data on screen. Keying the view by id starts it fresh each time.
+ */
 export default function SurveyPresent() {
   const { id } = useParams()
+  return <SurveyPresentView key={id ?? 'none'} id={id} />
+}
+
+function SurveyPresentView({ id }: { id: string | undefined }) {
   const validId = id !== undefined && UUID_PATTERN.test(id)
 
   const [loadState, setLoadState] = useState<LoadState>(

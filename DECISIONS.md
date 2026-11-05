@@ -72,6 +72,25 @@ Decisions made while reviewing the specification files in `docs/`. Where the doc
 
 ---
 
+## Results and CSV export decisions
+
+21. **The CSV has no extra rows: survey title and date go in the file name.**
+    The file name is the survey title (lowercased, punctuation turned into dashes) plus the export date, for example `recursion-concept-check-2026-11-05.csv`. This keeps the header on row 1, so the file opens as a clean table and imports into other tools without skipping lines. `TODO.md` previously said "export survey metadata"; the file name is that metadata.
+
+22. **CSV layout: one row per response, one column per question.**
+    The first two columns are `response_id` and `submitted_at` (UTC, ISO format). Each question then has a column whose header is the question text and whose cell is the text of the choice picked (empty if unanswered, or if the choice was later deleted). The anonymous browser token is deliberately not exported.
+
+23. **Spreadsheet-formula protection and standard CSV quoting.**
+    A cell that starts with `=`, `+`, `-` or `@` (or a tab or carriage return) gets a single quote in front so Excel and Sheets treat it as text, not a formula; this applies to headers too. Cells with commas, double quotes or line breaks are wrapped in quotes with inner quotes doubled; rows end with CRLF. The file starts with a UTF-8 byte-order mark so Excel reads accents and non-English text correctly.
+
+24. **The export pages through every row.**
+    One request returns at most 1000 rows, so responses and answers are fetched page by page (ordered by time, then id, so pages never overlap) until the server's reported total is reached or a page comes back empty. This also works if the server's limit is lower than the page size.
+
+25. **Results page.**
+    Each bar's length is the choice's share of that question's answers, and the count and percentage are printed beside every bar (and repeated in a screen-reader table), so nothing depends on colour. A question with no answers says "No answers yet."; a survey with no responses says "No responses yet." (with a Present QR button while it is active) and has Export CSV disabled. Results work for active, closed and archived surveys, and the dashboard shows a Results button for those three. The results page is loaded on demand so students opening a survey do not download the charting library.
+
+---
+
 ## Still open (to decide when we reach them)
 
 - **QR code origin:** generate it from `window.location.origin`, with an optional environment-variable override for testing on a phone.

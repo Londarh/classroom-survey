@@ -236,6 +236,14 @@ export default function SurveyCard({
               >
                 Present
               </Link>
+              <Link
+                to={`/surveys/${survey.id}/results`}
+                aria-disabled={buttons}
+                className={`${secondaryButton} ${buttons ? 'pointer-events-none opacity-60' : ''}`}
+                tabIndex={buttons ? -1 : undefined}
+              >
+                Results
+              </Link>
               <button
                 type="button"
                 disabled={buttons}
@@ -245,6 +253,16 @@ export default function SurveyCard({
                 Close
               </button>
             </>
+          )}
+          {(status === 'closed' || status === 'archived') && (
+            <Link
+              to={`/surveys/${survey.id}/results`}
+              aria-disabled={buttons}
+              className={`${secondaryButton} ${buttons ? 'pointer-events-none opacity-60' : ''}`}
+              tabIndex={buttons ? -1 : undefined}
+            >
+              Results
+            </Link>
           )}
           {(status === 'draft' || status === 'closed') && (
             <button

@@ -69,7 +69,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [ ] Add Duplicate action.
 - [x] Add Delete action.
 - [x] Add Archive action.
-- [ ] Add View Results action.
+- [x] Add View Results action.
 - [x] Add Activate action.
 - [x] Add Close action.
 - [x] Add search by survey title.
@@ -143,22 +143,22 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 9 — Results Dashboard
 
-- [ ] Create a results page for each survey.
-- [ ] Show total response count.
-- [ ] Aggregate answers by question.
-- [ ] Show counts for each choice.
-- [ ] Show percentages for each choice.
-- [ ] Add bar charts using Recharts.
-- [ ] Clearly label unanswered questions.
-- [ ] Add Refresh Results button.
-- [ ] Add link back to the main dashboard.
+- [x] Create a results page for each survey.
+- [x] Show total response count.
+- [x] Aggregate answers by question.
+- [x] Show counts for each choice.
+- [x] Show percentages for each choice.
+- [x] Add bar charts using Recharts.
+- [x] Clearly label unanswered questions.
+- [x] Add Refresh Results button.
+- [x] Add link back to the main dashboard.
 
 ---
 
 # Phase 10 — Historical Results
 
-- [ ] Allow viewing results for Closed surveys.
-- [ ] Allow viewing results for Archived surveys.
+- [x] Allow viewing results for Closed surveys.
+- [x] Allow viewing results for Archived surveys.
 - [ ] Add filtering by date. (optional)
 - [ ] Add filtering by survey title.
 - [ ] Preserve all historical response data.
@@ -167,12 +167,12 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 11 — CSV Export
 
-- [ ] Add Export CSV button.
-- [ ] Export survey metadata.
-- [ ] Export one row per response.
-- [ ] Include submission timestamp.
-- [ ] Include each question and answer.
-- [ ] Create safe CSV escaping.
+- [x] Add Export CSV button.
+- [x] Put the survey title and export date in the file name instead of extra rows (see DECISIONS.md #21).
+- [x] Export one row per response.
+- [x] Include submission timestamp.
+- [x] Include each question and answer.
+- [x] Create safe CSV escaping.
 - [ ] Test export with spreadsheet applications.
 
 ---
