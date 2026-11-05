@@ -87,6 +87,8 @@ Copy the example file and fill it in:
 cp .env.example .env
 ```
 
+(On Windows PowerShell: `Copy-Item .env.example .env`.)
+
 | Variable                                            | Required | Where to get it                                                                                                                                                                                    |
 | --------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `VITE_SUPABASE_URL`                                 | yes      | Supabase dashboard → **Project Settings → API** (or the **Connect** button): the _Project URL_, like `https://abcdefgh.supabase.co`.                                                               |
@@ -162,15 +164,16 @@ To check a deployment, open `/login` and refresh it, open `/s/anything` (it shou
 
 ## Troubleshooting
 
-| Problem                                                    | Likely cause and fix                                                                                                            |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| The app shows "Setup needed"                               | `.env` is missing or incomplete. Fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`, then restart `npm run dev`.          |
-| "Incorrect email or password."                             | The instructor user does not exist, was not auto-confirmed, or the password is wrong. Check Authentication → Users in Supabase. |
-| Errors such as "permission denied" or "function not found" | One of the SQL files was not run, or not in order. Run `001`, `002`, `003` (they are safe to run again).                        |
-| A student link says "Survey not found."                    | The survey is a draft, or the slug is wrong. Only an activated survey has a working link.                                       |
-| "This survey is no longer accepting responses."            | The survey was closed. Activate a draft (a closed survey cannot be reopened; duplicate it instead).                             |
-| The site stopped responding after a quiet week             | Free Supabase projects pause after about a week of inactivity. Restore the project in the Supabase dashboard.                   |
-| `npm install` warns about the engine / Node version        | Use Node 22.12 or newer.                                                                                                        |
+| Problem                                                      | Likely cause and fix                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The app shows "Setup needed"                                 | `.env` is missing or incomplete. Fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`, then restart `npm run dev`.                                                                                                                                                                               |
+| "Incorrect email or password."                               | The instructor user does not exist, was not auto-confirmed, or the password is wrong. Check Authentication → Users in Supabase.                                                                                                                                                                      |
+| Errors such as "permission denied" or "function not found"   | One of the SQL files was not run, or not in order. Run `001`, `002`, `003` (they are safe to run again).                                                                                                                                                                                             |
+| A student link says "Survey not found."                      | The survey is a draft, or the slug is wrong. Only an activated survey has a working link.                                                                                                                                                                                                            |
+| "This survey is no longer accepting responses."              | The survey was closed. Activate a draft (a closed survey cannot be reopened; duplicate it instead).                                                                                                                                                                                                  |
+| The site stopped responding after a quiet week               | Free Supabase projects pause after about a week of inactivity. Restore the project in the Supabase dashboard.                                                                                                                                                                                        |
+| `npm install` warns about the engine / Node version          | Use Node 22.12 or newer.                                                                                                                                                                                                                                                                             |
+| `npm install` reports "10 moderate severity vulnerabilities" | All ten are one advisory in `minimatch`, reached through the ESLint development tools; they never ship in the site. `npm audit --omit=dev` reports 0 vulnerabilities for what the site actually uses. The suggested automatic fix is a breaking downgrade of the lint tooling, so it was left alone. |
 
 ## More documentation
 
