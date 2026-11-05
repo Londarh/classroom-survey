@@ -37,9 +37,9 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Add timestamps.
 - [x] Add survey-status validation.
 - [x] Create Row Level Security policies.
-- [ ] Verify students cannot read survey results.
+- [x] Verify students cannot read survey results.
 - [ ] Verify anonymous students can read active surveys.
-- [ ] Verify anonymous students can submit responses.
+- [x] Verify anonymous students can submit responses.
 - [ ] Verify authenticated instructors have full access.
 
 ---
@@ -204,19 +204,19 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 14 — Testing
 
-- [ ] Test instructor login.
-- [ ] Test survey creation.
+- [x] Test instructor login.
+- [x] Test survey creation.
 - [ ] Test survey editing.
 - [ ] Test activation.
 - [ ] Test closing surveys.
 - [ ] Test QR-code links.
-- [ ] Test student submissions.
+- [x] Test student submissions.
 - [ ] Test duplicate-submission prevention.
 - [ ] Test results calculations.
 - [ ] Test CSV export.
 - [ ] Test mobile layout.
 - [ ] Test with at least two browsers.
-- [ ] Test unauthorized access attempts.
+- [x] Test unauthorized access attempts.
 - [ ] Test database Row Level Security.
 
 ---

@@ -32,13 +32,14 @@ The database must be set up first: see [supabase/README.md](supabase/README.md) 
 
 ### Other scripts
 
-| Command                | What it does                           |
-| ---------------------- | -------------------------------------- |
-| `npm run build`        | Type-check and build to `dist/`        |
-| `npm run preview`      | Serve the production build locally     |
-| `npm run lint`         | Run ESLint                             |
-| `npm run format`       | Format the code with Prettier          |
-| `npm run format:check` | Check formatting without changing code |
+| Command                  | What it does                                                                                          |
+| ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `npm run build`          | Type-check and build to `dist/`                                                                       |
+| `npm run preview`        | Serve the production build locally                                                                    |
+| `npm run lint`           | Run ESLint                                                                                            |
+| `npm run format`         | Format the code with Prettier                                                                         |
+| `npm run format:check`   | Check formatting without changing code                                                                |
+| `npm run check:security` | Try forbidden actions as a student against the real database (see [docs/TESTING.md](docs/TESTING.md)) |
 
 ## Project layout
 
