@@ -3,6 +3,7 @@ import {
   Bar,
   BarChart,
   LabelList,
+  Rectangle,
   ResponsiveContainer,
   XAxis,
   YAxis,
@@ -143,6 +144,12 @@ export default function ResultsChart({
             />
             <Bar
               dataKey="count"
+              // Recharts drops zero-width bars from its data unless the bar has a
+              // custom shape, and with them the number label and the grey track.
+              // <Rectangle /> is the normal bar (it draws nothing at width 0), so
+              // nothing looks different, but a choice with 0 answers keeps its
+              // "0 (0%)" label.
+              shape={<Rectangle />}
               fill="#334155"
               radius={[0, 4, 4, 0]}
               background={{ fill: '#e2e8f0', radius: 4 }}
