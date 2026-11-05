@@ -38,9 +38,9 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Add survey-status validation.
 - [x] Create Row Level Security policies.
 - [x] Verify students cannot read survey results.
-- [ ] Verify anonymous students can read active surveys.
+- [x] Verify anonymous students can read active surveys.
 - [x] Verify anonymous students can submit responses.
-- [ ] Verify authenticated instructors have full access.
+- [x] Verify authenticated instructors have full access.
 
 ---
 
@@ -197,7 +197,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Add error messages.
 - [x] Add confirmation dialogs for destructive actions.
 - [ ] Improve QR-code presentation for classroom projection.
-- [ ] Test accessibility and keyboard navigation.
+- [x] Test accessibility and keyboard navigation.
 - [x] Improve color contrast.
 
 ---
@@ -217,7 +217,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [ ] Test mobile layout.
 - [ ] Test with at least two browsers.
 - [x] Test unauthorized access attempts.
-- [ ] Test database Row Level Security.
+- [x] Test database Row Level Security.
 
 ---
 
