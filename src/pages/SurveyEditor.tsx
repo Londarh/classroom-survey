@@ -8,6 +8,7 @@ import {
   getSurveyForEdit,
   saveDraftSurvey,
 } from '../lib/surveys.ts'
+import { scrollToFirstProblem } from '../lib/scroll.ts'
 import {
   LIMITS,
   moveItem,
@@ -94,6 +95,9 @@ function SurveyEditorForm({ id }: { id: string | undefined }) {
   const [activating, setActivating] = useState(false)
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({})
   const [confirmDeleteKey, setConfirmDeleteKey] = useState<string | null>(null)
+  // Bumped whenever validation or server errors were just shown; the effect
+  // below then jumps to the first one once React has drawn it.
+  const [problemJump, setProblemJump] = useState(0)
 
   const saving = saveState === 'saving'
 
@@ -119,6 +123,10 @@ function SurveyEditorForm({ id }: { id: string | undefined }) {
       active = false
     }
   }, [id, isNew, reloadKey])
+
+  useEffect(() => {
+    if (problemJump > 0) scrollToFirstProblem()
+  }, [problemJump])
 
   function retryLoad() {
     setLoadState('loading')
@@ -159,7 +167,8 @@ function SurveyEditorForm({ id }: { id: string | undefined }) {
     setServerErrors({})
 
     if (validation.hasErrors) {
-      setFormError('Fix the problems marked below, then try again.')
+      setFormError('Fix the problems shown above, then try again.')
+      setProblemJump((count) => count + 1)
       return
     }
     if (activate && draft.questions.length === 0) {
@@ -184,8 +193,10 @@ function SurveyEditorForm({ id }: { id: string | undefined }) {
         error instanceof SurveyActionError && error.questionNumber
           ? draft.questions[error.questionNumber - 1]?.key
           : undefined
-      if (questionKey) setServerErrors({ [questionKey]: message })
-      else setFormError(message)
+      if (questionKey) {
+        setServerErrors({ [questionKey]: message })
+        setProblemJump((count) => count + 1)
+      } else setFormError(message)
       return
     }
 

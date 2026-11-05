@@ -1,8 +1,9 @@
 import QRCode from 'qrcode'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
 import { publicSurveyUrl } from '../lib/publicUrl.ts'
+import { useConfirmFocus } from '../lib/useConfirmFocus.ts'
 import {
   SurveyActionError,
   closeSurvey,
@@ -66,6 +67,8 @@ function SurveyPresentView({ id }: { id: string | undefined }) {
 
   const [qrImage, setQrImage] = useState<string | null>(null)
   const [confirmingClose, setConfirmingClose] = useState(false)
+  const controlsRef = useRef<HTMLDivElement>(null)
+  useConfirmFocus(confirmingClose, controlsRef)
   const [closing, setClosing] = useState(false)
   const [closeError, setCloseError] = useState<string | null>(null)
 
@@ -260,7 +263,7 @@ function SurveyPresentView({ id }: { id: string | undefined }) {
         </div>
       </div>
 
-      <div className="w-full max-w-3xl space-y-3">
+      <div ref={controlsRef} className="w-full max-w-3xl space-y-3">
         {closeError && (
           <p
             role="alert"
@@ -282,6 +285,7 @@ function SurveyPresentView({ id }: { id: string | undefined }) {
             <button
               type="button"
               disabled={closing}
+              data-confirm-cancel
               onClick={() => setConfirmingClose(false)}
               className={secondaryButton}
             >
@@ -314,6 +318,7 @@ function SurveyPresentView({ id }: { id: string | undefined }) {
             </button>
             <button
               type="button"
+              data-confirm-trigger
               onClick={() => {
                 setCloseError(null)
                 setConfirmingClose(true)
@@ -328,7 +333,7 @@ function SurveyPresentView({ id }: { id: string | undefined }) {
         <p>
           <Link
             to="/dashboard"
-            className="text-sm text-slate-600 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className="inline-flex min-h-11 items-center text-sm text-slate-600 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
           >
             Back to dashboard
           </Link>

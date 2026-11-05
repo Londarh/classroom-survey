@@ -66,7 +66,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Add status badges for Draft, Active, Closed, and Archived.
 - [x] Add a New Survey button.
 - [x] Add Edit action.
-- [ ] Add Duplicate action.
+- [x] Add Duplicate action.
 - [x] Add Delete action.
 - [x] Add Archive action.
 - [x] Add View Results action.
@@ -179,12 +179,12 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 12 — Survey Duplication
 
-- [ ] Duplicate survey title and description.
-- [ ] Duplicate questions.
-- [ ] Duplicate answer choices.
-- [ ] Create the copy in Draft state.
-- [ ] Add "Copy of ..." naming.
-- [ ] Redirect to the editor after duplication.
+- [x] Duplicate survey title and description.
+- [x] Duplicate questions.
+- [x] Duplicate answer choices.
+- [x] Create the copy in Draft state.
+- [x] Add "Copy of ..." naming.
+- [x] Redirect to the editor after duplication.
 
 ---
 
@@ -192,13 +192,13 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 - [ ] Add consistent page layouts.
 - [ ] Improve mobile responsiveness.
-- [ ] Add loading states.
-- [ ] Add empty states.
-- [ ] Add error messages.
-- [ ] Add confirmation dialogs for destructive actions.
+- [x] Add loading states.
+- [x] Add empty states.
+- [x] Add error messages.
+- [x] Add confirmation dialogs for destructive actions.
 - [ ] Improve QR-code presentation for classroom projection.
 - [ ] Test accessibility and keyboard navigation.
-- [ ] Improve color contrast.
+- [x] Improve color contrast.
 
 ---
 

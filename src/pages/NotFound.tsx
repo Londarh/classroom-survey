@@ -6,7 +6,7 @@ export default function NotFound() {
       <h1 className="text-3xl font-bold">Page not found</h1>
       <Link
         to="/"
-        className="text-slate-900 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+        className="inline-flex min-h-11 items-center text-slate-900 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
       >
         Back to home
       </Link>

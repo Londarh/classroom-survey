@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import { LIMITS } from '../lib/surveyEditor.ts'
+import { useConfirmFocus } from '../lib/useConfirmFocus.ts'
 import type {
   DraftQuestion,
   QuestionErrors,
@@ -6,6 +8,7 @@ import type {
 } from '../lib/surveyEditor.ts'
 import {
   fieldClass,
+  dangerButton,
   fieldErrorClass,
   secondaryButton,
   smallButton,
@@ -41,9 +44,12 @@ export default function QuestionCard(props: QuestionCardProps) {
   const textId = `question-${question.key}-text`
   const typeId = `question-${question.key}-type`
   const isMultipleChoice = question.type === 'multiple_choice'
+  const sectionRef = useRef<HTMLElement>(null)
+  useConfirmFocus(props.confirmingDelete, sectionRef)
 
   return (
     <section
+      ref={sectionRef}
       aria-labelledby={`question-${question.key}-heading`}
       className="space-y-4 rounded-lg border border-slate-300 bg-white p-4"
     >
@@ -216,6 +222,7 @@ export default function QuestionCard(props: QuestionCardProps) {
       {serverError && (
         <p
           role="alert"
+          data-problem
           className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-red-900"
         >
           {serverError}
@@ -233,6 +240,7 @@ export default function QuestionCard(props: QuestionCardProps) {
           </p>
           <button
             type="button"
+            data-confirm-cancel
             onClick={props.onCancelDelete}
             className={secondaryButton}
           >
@@ -241,7 +249,7 @@ export default function QuestionCard(props: QuestionCardProps) {
           <button
             type="button"
             onClick={props.onConfirmDelete}
-            className="inline-flex min-h-11 items-center rounded-lg bg-red-700 px-5 py-2 font-medium text-white hover:bg-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+            className={dangerButton}
           >
             Delete
           </button>
@@ -250,6 +258,7 @@ export default function QuestionCard(props: QuestionCardProps) {
         <button
           type="button"
           disabled={disabled}
+          data-confirm-trigger
           onClick={props.onAskDelete}
           className={secondaryButton}
         >

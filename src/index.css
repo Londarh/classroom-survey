@@ -1,1 +1,11 @@
 @import 'tailwindcss';
+
+/* Tailwind's default placeholder colour (half-transparent text) is too faint to
+   read comfortably; this slate is about 4.8:1 against white. */
+@layer base {
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-slate-500);
+    opacity: 1;
+  }
+}

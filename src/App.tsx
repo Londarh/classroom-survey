@@ -1,8 +1,10 @@
 import { Suspense, lazy } from 'react'
-import { Route, Routes } from 'react-router'
+import { Route, Routes, useLocation } from 'react-router'
 import ConfigMissing from './components/ConfigMissing.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
+import { pageTitle } from './lib/pageTitle.ts'
 import { isSupabaseConfigured } from './lib/supabase.ts'
+import { useDocumentTitle } from './lib/useDocumentTitle.ts'
 import Dashboard from './pages/Dashboard.tsx'
 import Landing from './pages/Landing.tsx'
 import Login from './pages/Login.tsx'
@@ -16,6 +18,9 @@ import SurveyPresent from './pages/SurveyPresent.tsx'
 const SurveyResults = lazy(() => import('./pages/SurveyResults.tsx'))
 
 export default function App() {
+  const { pathname } = useLocation()
+  useDocumentTitle(pageTitle(pathname))
+
   if (!isSupabaseConfigured) return <ConfigMissing />
 
   return (

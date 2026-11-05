@@ -1,5 +1,9 @@
 import { supabase } from './supabase'
-import { questionsFromServer, toQuestionsPayload } from './surveyEditor.ts'
+import {
+  copyTitle,
+  questionsFromServer,
+  toQuestionsPayload,
+} from './surveyEditor.ts'
 import type { DraftSurvey, ServerQuestion } from './surveyEditor.ts'
 
 export type SurveyStatus = 'draft' | 'active' | 'closed' | 'archived'
@@ -129,10 +133,12 @@ function toActionError(
  * Saves a whole draft (title, description, questions, choices) through the
  * save_draft_survey function, which writes everything in one transaction.
  * Pass null as the id to create a new survey. Returns the survey's id.
+ * `fallback` is the message used for failures that have no specific wording.
  */
 export async function saveDraftSurvey(
   id: string | null,
   draft: DraftSurvey,
+  fallback = "We couldn't save the survey. Check your connection and try again.",
 ): Promise<string> {
   const { data, error } = await supabase.rpc('save_draft_survey', {
     p_survey_id: id,
@@ -143,12 +149,34 @@ export async function saveDraftSurvey(
 
   if (error) {
     console.error('save_draft_survey failed', error)
-    throw toActionError(
-      error,
-      "We couldn't save the survey. Check your connection and try again.",
-    )
+    throw toActionError(error, fallback)
   }
   return (data as { id: string }).id
+}
+
+/**
+ * Makes a new draft called "Copy of <title>" with the same description,
+ * questions and choices (and no responses), using save_draft_survey like any
+ * other save. Works for a survey in any status. Returns the new survey's id.
+ */
+export async function duplicateSurvey(id: string): Promise<string> {
+  const fallback =
+    "We couldn't duplicate the survey. Check your connection and try again."
+
+  let source: SurveyForEdit | null
+  try {
+    source = await getSurveyForEdit(id)
+  } catch (error) {
+    console.error('Could not load the survey to duplicate', error)
+    throw new SurveyActionError(fallback)
+  }
+  if (!source) throw new SurveyActionError('This survey no longer exists.')
+
+  return saveDraftSurvey(
+    null,
+    { ...source.draft, title: copyTitle(source.draft.title) },
+    fallback,
+  )
 }
 
 // ---------------------------------------------------------------------------

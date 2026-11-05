@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import {
   SurveyActionError,
@@ -6,10 +6,12 @@ import {
   archiveSurvey,
   closeSurvey,
   deleteSurvey,
+  duplicateSurvey,
   getResponseCount,
 } from '../lib/surveys.ts'
 import type { SurveySummary } from '../lib/surveys.ts'
 import { dangerButton, secondaryButton } from '../lib/styles.ts'
+import { useConfirmFocus } from '../lib/useConfirmFocus.ts'
 import StatusBadge from './StatusBadge.tsx'
 
 type Confirmation =
@@ -48,14 +50,25 @@ export default function SurveyCard({
   const navigate = useNavigate()
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null)
   const [working, setWorking] = useState(false)
+  // Which action is running, so only that button shows "...ing".
+  const [currentAction, setCurrentAction] = useState<string | null>(null)
+  // Which button opened the last confirmation (focus returns to it on cancel).
+  const [lastKind, setLastKind] = useState<Confirmation['kind']>('close')
+  const cardRef = useRef<HTMLLIElement>(null)
+  useConfirmFocus(
+    confirmation !== null,
+    cardRef,
+    `[data-confirm-trigger="${lastKind}"]`,
+  )
   const [error, setError] = useState<string | null>(null)
 
   const { status } = survey
 
   // Runs one action: keeps every button disabled while it works and shows a
   // plain-language message on this card if it fails.
-  async function run(action: () => Promise<void>) {
+  async function run(name: string, action: () => Promise<void>) {
     setWorking(true)
+    setCurrentAction(name)
     onBusyChange(true)
     setError(null)
     try {
@@ -68,12 +81,13 @@ export default function SurveyCard({
       )
     } finally {
       setWorking(false)
+      setCurrentAction(null)
       onBusyChange(false)
     }
   }
 
   function activate() {
-    return run(async () => {
+    return run('activate', async () => {
       await activateSurvey(survey.id)
       navigate(`/surveys/${survey.id}/present`)
     })
@@ -82,7 +96,7 @@ export default function SurveyCard({
   // Deleting first looks up how many responses would be lost, so the warning
   // can say so.
   function askDelete() {
-    return run(async () => {
+    return run('delete-check', async () => {
       let responses: number
       try {
         responses = await getResponseCount(survey.id)
@@ -92,13 +106,14 @@ export default function SurveyCard({
           "We couldn't check this survey's responses, so it was not deleted. Try again.",
         )
       }
+      setLastKind('delete')
       setConfirmation({ kind: 'delete', responses })
     })
   }
 
   function confirmAction() {
     if (!confirmation) return
-    return run(async () => {
+    return run('confirm', async () => {
       if (confirmation.kind === 'close') await closeSurvey(survey.id)
       else if (confirmation.kind === 'archive') await archiveSurvey(survey.id)
       else await deleteSurvey(survey.id)
@@ -107,10 +122,26 @@ export default function SurveyCard({
     })
   }
 
+  // Duplicate: the copy is made through save_draft_survey, then the editor opens.
+  function duplicate() {
+    return run('duplicate', async () => {
+      const newId = await duplicateSurvey(survey.id)
+      navigate(`/surveys/${newId}/edit`)
+    })
+  }
+
+  function openConfirmation(next: Confirmation) {
+    setLastKind(next.kind)
+    setConfirmation(next)
+  }
+
   const buttons = disabled || working
 
   return (
-    <li className="rounded-lg border border-slate-300 bg-white p-4">
+    <li
+      ref={cardRef}
+      className="rounded-lg border border-slate-300 bg-white p-4"
+    >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <h2 className="text-lg font-semibold">{survey.title}</h2>
         <StatusBadge status={status} />
@@ -131,7 +162,13 @@ export default function SurveyCard({
       {confirmation ? (
         <div
           role="alertdialog"
-          aria-label="Confirm"
+          aria-label={
+            confirmation.kind === 'close'
+              ? `Close ${survey.title}?`
+              : confirmation.kind === 'archive'
+                ? `Archive ${survey.title}?`
+                : `Delete ${survey.title}?`
+          }
           className="mt-3 space-y-3 rounded-lg border border-red-300 bg-red-50 p-3 text-red-900"
         >
           {confirmation.kind === 'close' && (
@@ -157,7 +194,8 @@ export default function SurveyCard({
                     {' '}
                     and{' '}
                     <strong>
-                      all {plural(confirmation.responses, 'response')}
+                      {confirmation.responses === 1 ? 'the' : 'all'}{' '}
+                      {plural(confirmation.responses, 'response')}
                     </strong>{' '}
                     it has received.
                   </>
@@ -181,6 +219,7 @@ export default function SurveyCard({
             <button
               type="button"
               disabled={buttons}
+              data-confirm-cancel
               onClick={() => setConfirmation(null)}
               className={secondaryButton}
             >
@@ -222,7 +261,7 @@ export default function SurveyCard({
                 onClick={activate}
                 className={secondaryButton}
               >
-                {working ? 'Working...' : 'Activate'}
+                {currentAction === 'activate' ? 'Activating...' : 'Activate'}
               </button>
             </>
           )}
@@ -247,7 +286,8 @@ export default function SurveyCard({
               <button
                 type="button"
                 disabled={buttons}
-                onClick={() => setConfirmation({ kind: 'close' })}
+                data-confirm-trigger="close"
+                onClick={() => openConfirmation({ kind: 'close' })}
                 className={secondaryButton}
               >
                 Close
@@ -264,11 +304,20 @@ export default function SurveyCard({
               Results
             </Link>
           )}
+          <button
+            type="button"
+            disabled={buttons}
+            onClick={duplicate}
+            className={secondaryButton}
+          >
+            {currentAction === 'duplicate' ? 'Duplicating...' : 'Duplicate'}
+          </button>
           {(status === 'draft' || status === 'closed') && (
             <button
               type="button"
               disabled={buttons}
-              onClick={() => setConfirmation({ kind: 'archive' })}
+              data-confirm-trigger="archive"
+              onClick={() => openConfirmation({ kind: 'archive' })}
               className={secondaryButton}
             >
               Archive
@@ -277,6 +326,7 @@ export default function SurveyCard({
           <button
             type="button"
             disabled={buttons}
+            data-confirm-trigger="delete"
             onClick={askDelete}
             className={secondaryButton}
           >

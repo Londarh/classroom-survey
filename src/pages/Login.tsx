@@ -120,7 +120,7 @@ export default function Login() {
         <p className="text-center">
           <Link
             to="/"
-            className="text-slate-700 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className="inline-flex min-h-11 items-center text-slate-700 underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
           >
             Back to home
           </Link>

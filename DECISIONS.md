@@ -91,6 +91,22 @@ Decisions made while reviewing the specification files in `docs/`. Where the doc
 
 ---
 
+## Duplicate and polish decisions
+
+26. **Duplicate works on a survey in any status and goes through `save_draft_survey`.**
+    The copy is a new draft titled "Copy of <title>" (cut to the 200-character title limit) with the same description, questions and choices, and no responses; the editor then opens on it. The copy is saved like any other draft, so the same validation applies and nothing is half-copied if it fails.
+
+27. **Confirmations stay inline, and keyboard focus follows them.**
+    Delete, archive and close confirmations (and "delete question") open in place rather than as modal pop-ups, in line with `UI.md` ("avoid excessive modal dialogs"). Because the button that opened one disappears, focus moves to the confirmation's Cancel button, and returns to the opening button if it is cancelled.
+
+28. **Error jumps are instant, not animated, and run after the errors are drawn.**
+    When saving or submitting finds problems, the page jumps straight to the first one and focuses it. No scrolling animation is used (`UI.md` says to avoid decorative animation, and a long animated scroll is disorienting). The editor does this from an effect, because after a network call React draws the new messages a moment later.
+
+29. **Page titles, placeholder contrast and 44px targets.**
+    Each page sets a descriptive browser-tab title; input placeholder text uses a darker slate (about 4.8:1 against white) than Tailwind's default; and every button, field and text link is at least 44px tall.
+
+---
+
 ## Still open (to decide when we reach them)
 
 - **QR code origin:** generate it from `window.location.origin`, with an optional environment-variable override for testing on a phone.

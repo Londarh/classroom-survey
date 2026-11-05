@@ -48,6 +48,11 @@ export function newQuestion(): DraftQuestion {
   }
 }
 
+/** Title for a duplicated survey, kept within the title length limit. */
+export function copyTitle(title: string): string {
+  return `Copy of ${title}`.slice(0, LIMITS.title).trim()
+}
+
 /** Returns a copy of the list with the item at `index` moved by `offset`. */
 export function moveItem<T>(list: T[], index: number, offset: number): T[] {
   const target = index + offset

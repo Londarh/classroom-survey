@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import { useParams } from 'react-router'
 import { hasSubmitted, markSubmitted } from '../lib/browserStorage.ts'
@@ -23,7 +23,12 @@ type View =
   | { kind: 'thanks' }
   | { kind: 'form'; survey: PublicSurvey; questions: PublicQuestion[] }
 
-/** A centred full-screen message. Students get nothing but the survey: no menu, no links. */
+/**
+ * A centred full-screen message. Students get nothing but the survey: no menu,
+ * no links. When a message replaces the form (thank you, already submitted,
+ * closed) it takes keyboard focus, so screen readers read it out instead of
+ * leaving focus on a button that no longer exists.
+ */
 function Message({
   children,
   role,
@@ -31,9 +36,19 @@ function Message({
   children: ReactNode
   role?: 'status' | 'alert'
 }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    ref.current?.focus({ preventScroll: true })
+  }, [])
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-white px-6 text-center text-slate-900">
-      <div role={role} className="max-w-md space-y-3 text-xl">
+      <div
+        ref={ref}
+        tabIndex={-1}
+        role={role}
+        className="max-w-md space-y-3 text-xl outline-none"
+      >
         {children}
       </div>
     </main>
@@ -166,13 +181,8 @@ function SurveyForm({
   function scrollToQuestion(questionId: string) {
     const group = document.getElementById(`question-${questionId}`)
     if (!group) return
-    const reduceMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-    group.scrollIntoView({
-      block: 'center',
-      behavior: reduceMotion ? 'auto' : 'smooth',
-    })
+    // An instant jump (no animation), so there is nothing to disorient anyone.
+    group.scrollIntoView({ block: 'center' })
     group.querySelector('input')?.focus({ preventScroll: true })
   }
 
