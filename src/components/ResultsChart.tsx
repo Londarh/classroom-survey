@@ -12,6 +12,40 @@ import type { ResultQuestion } from '../lib/results.ts'
 
 const ROW_HEIGHT = 52
 
+interface EndLabelProps {
+  /** The bar this label belongs to. */
+  viewBox?: { y?: number; height?: number }
+  /** The whole chart area (not just the plot), including the right margin. */
+  parentViewBox?: { x?: number; width?: number }
+  value?: string | number
+}
+
+/**
+ * The "count (percentage)" text beside each bar. Every label starts at the right
+ * end of the track, so the numbers line up in one column, and a choice with no
+ * answers ("0 (0%)") sits in the same place as a full one ("6 (100%)") instead
+ * of at the left edge. The track ends where the chart's right margin begins,
+ * so that margin is the room left for the text.
+ */
+function renderEndLabel(props: EndLabelProps, rightMargin: number) {
+  const { viewBox, parentViewBox, value } = props
+  const trackEnd =
+    (parentViewBox?.x ?? 0) + (parentViewBox?.width ?? 0) - rightMargin
+  const middle = (viewBox?.y ?? 0) + (viewBox?.height ?? 0) / 2
+  return (
+    <text
+      x={trackEnd + 8}
+      y={middle}
+      dy="0.35em"
+      fill="#0f172a"
+      fontSize={14}
+      fontWeight={600}
+    >
+      {value}
+    </text>
+  )
+}
+
 // On phone-width screens the choice names and the numbers get less room, so the
 // bars themselves keep a usable length.
 const NARROW_QUERY = '(max-width: 480px)'
@@ -107,6 +141,8 @@ export default function ResultsChart({
   question: ResultQuestion
 }) {
   const narrow = useNarrowScreen()
+  // Room to the right of the tracks for the "count (percentage)" text.
+  const marginRight = narrow ? 96 : 104
   const data = question.choices.map((choice) => ({
     id: choice.choice_id,
     count: choice.count,
@@ -129,7 +165,7 @@ export default function ResultsChart({
           <BarChart
             layout="vertical"
             data={data}
-            margin={{ top: 4, right: narrow ? 88 : 96, bottom: 4, left: 0 }}
+            margin={{ top: 4, right: marginRight, bottom: 4, left: 0 }}
             barCategoryGap={10}
           >
             <XAxis type="number" hide domain={[0, trackMax]} />
@@ -157,10 +193,9 @@ export default function ResultsChart({
             >
               <LabelList
                 dataKey="label"
-                position="right"
-                fill="#0f172a"
-                fontSize={14}
-                fontWeight={600}
+                content={(props) =>
+                  renderEndLabel(props as unknown as EndLabelProps, marginRight)
+                }
               />
             </Bar>
           </BarChart>
