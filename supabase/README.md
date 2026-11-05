@@ -130,7 +130,7 @@ select public.save_draft_survey(null, 'x', null, '[]'::jsonb);
 rollback;
 ```
 
-The remaining checks (a student really submitting, duplicates being rejected, results adding up, the instructor reading everything) need the app or the Supabase API with real tokens. They are the "Verify ..." items still unchecked in [../TODO.md](../TODO.md).
+A student really submitting, duplicates being rejected, results adding up and the instructor reading everything need the app or real tokens. The script `npm run check:security` covers the security side (see the main [README](../README.md#security-check) and [../docs/TESTING.md](../docs/TESTING.md)); the rest was tested by hand.
 
 ## Starting over
 
