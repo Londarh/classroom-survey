@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard.tsx'
 import Landing from './pages/Landing.tsx'
 import Login from './pages/Login.tsx'
 import NotFound from './pages/NotFound.tsx'
+import StudentSurvey from './pages/StudentSurvey.tsx'
 import SurveyEditor from './pages/SurveyEditor.tsx'
 import SurveyPresent from './pages/SurveyPresent.tsx'
 import SurveyResults from './pages/SurveyResults.tsx'
@@ -17,6 +18,9 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
+
+      {/* Public student page, reached from the QR code. No login. */}
+      <Route path="/s/:slug" element={<StudentSurvey />} />
 
       {/* Instructor-only pages: visitors who are not logged in go to /login. */}
       <Route element={<ProtectedRoute />}>
