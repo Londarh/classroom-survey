@@ -54,7 +54,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Redirect unauthenticated users to login.
 - [x] Show the logged-in instructor in the dashboard.
 - [x] Create the instructor account and disable public signups and anonymous sign-ins in Supabase Auth.
-- [ ] Create an instructor demo login for grading (shared through HuskyCT, not committed to the repository).
+- [ ] The grader uses the instructor account; its credentials are given through HuskyCT and are not stored in the repository.
 
 ---
 
@@ -160,8 +160,8 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Allow viewing results for Closed surveys.
 - [x] Allow viewing results for Archived surveys.
 - [ ] Add filtering by date. (optional)
-- [ ] Add filtering by survey title.
-- [ ] Preserve all historical response data.
+- [x] Add filtering by survey title.
+- [x] Preserve all historical response data.
 
 ---
 
@@ -173,7 +173,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 - [x] Include submission timestamp.
 - [x] Include each question and answer.
 - [x] Create safe CSV escaping.
-- [ ] Test export with spreadsheet applications.
+- [x] Test export with spreadsheet applications.
 
 ---
 
@@ -256,7 +256,7 @@ This roadmap breaks the implementation into small, testable phases ordered from 
 
 # Phase 17 — Submission Deliverables
 
-- [ ] Write `README.md` with setup and deployment instructions.
-- [ ] Write the development summary (about 1–2 pages).
-- [ ] Export or summarize the AI development history.
-- [ ] Capture database screenshots: tables, a survey with its questions, stored responses, and results in the app.
+- [x] Write `README.md` with setup and deployment instructions.
+- [x] Write the development summary (about 1–2 pages).
+- [x] Export or summarize the AI development history.
+- [x] Capture database screenshots: tables, a survey with its questions, stored responses, and results in the app.
